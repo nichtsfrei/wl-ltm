@@ -1,4 +1,4 @@
-# wl-toggle-lid-monitor
+# wl-lid-toggle-monitor
 
 Utility to toggle a defined display when lid is closed for wayland compositors.
 

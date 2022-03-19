@@ -1,5 +1,5 @@
 project(
-  'wl-tlm',
+  'wl-ltm',
   'c',
   version : '0.0.1',
   license : 'MIT',
