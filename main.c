@@ -20,8 +20,9 @@
 
 volatile bool run = true;
 
-static void signal_stop_handler(int signum) { 
-	(void) signum;
+static void signal_stop_handler(int signum)
+{
+	(void)signum;
 	run = false;
 }
 
@@ -156,39 +157,45 @@ exit_display:
 	return state.failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
+static inline int parent(const pid_t pid)
+{
+	FILE *fp = NULL;
+	printf("started (%d) to watch for %s to handle %s\n",
+	       pid,
+	       LTM_LID_STATE_FILE_PATH,
+	       LTM_TOGGLE_MONITOR);
+	if ((fp = fopen(LTM_PID_LOCATION, "w")) == NULL) {
+		fprintf(stderr,
+			"failed to write pid file (%s)\n",
+			LTM_PID_LOCATION);
+		return EXIT_FAILURE;
+	}
+	fprintf(fp, "%d\n", pid);
+	return EXIT_SUCCESS;
+}
+
 int main(void)
 {
 
 	pid_t pid, sid;
-	FILE *fp = NULL;
 
 	pid = fork();
 	if (pid < 0) {
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	if (pid > 0) {
-		printf("started (%d) to watch for %s to handle %s\n",
-		       pid,
-		       LTM_LID_STATE_FILE_PATH,
-		       LTM_TOGGLE_MONITOR);
-		if ((fp = fopen(LTM_PID_LOCATION, "w")) == NULL) {
-			fprintf(stderr,
-				"failed to write pid file (%s)\n",
-				LTM_PID_LOCATION);
-		}
-		fprintf(fp, "%d\n", pid);
-		exit(EXIT_SUCCESS);
+		return parent(pid);
 	}
 
 	umask(0);
 
 	sid = setsid();
 	if (sid < 0) {
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	if ((chdir("/")) < 0) {
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	close(STDIN_FILENO);
@@ -198,5 +205,5 @@ int main(void)
 	signal(SIGINT, signal_stop_handler);
 	signal(SIGABRT, signal_stop_handler);
 	signal(SIGTERM, signal_stop_handler);
-	ltm_loop(LTM_TOGGLE_MONITOR, LTM_LID_STATE_FILE_PATH);
+	return ltm_loop(LTM_TOGGLE_MONITOR, LTM_LID_STATE_FILE_PATH);
 }
