@@ -1,0 +1,3 @@
+option('pidlocation', type : 'string', value : '/tmp/wl-ltm.pid', description : 'location to store the pid file')
+option('lidstatelocation', type: 'string', value: '/proc/acpi/button/lid/LID/state', description: 'location of the lid state file')
+option('display', type: 'string', value: 'eDP-1', description: 'display name to toggle')

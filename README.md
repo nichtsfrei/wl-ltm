@@ -1,6 +1,6 @@
 # wl-lid-toggle-monitor
 
-Utility to toggle a defined display when lid is closed for wayland compositors.
+Daemon to toggle a defined display when lid is closed for wayland compositors.
 
 ## Building
 
@@ -13,7 +13,7 @@ Then run:
 ```
 meson build -Ddisplay=eDP-1
 ninja -C build
-build/wlr-randr
+build/wl-ltm
 ```
 
 The wayland protocol is stolen from [wlr-randr](https://sr.ht/~emersion/wlr-randr/).
