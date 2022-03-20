@@ -77,20 +77,17 @@ static int ltm_lid_closed(const char *lfp)
 
 	FILE *fp;
 	char *line = NULL;
-	size_t llen;
+	size_t bs, llen;
 	ssize_t read;
-	int result;
 
 	if ((fp = fopen(lfp, "r")) == NULL)
 		return -1;
-	while ((read = getline(&line, &llen, fp)) != EOF)
-		;
-	fclose(fp);
-	result = strlen(line) == length_closed ? 1 : 0;
-	if (line != NULL)
+	while ((read = getline(&line, &bs, fp)) != EOF) {
 		free(line);
-
-	return result;
+		llen = read;
+	}
+	fclose(fp);
+	return llen == length_closed;
 }
 
 static int ltm_loop(const char *dn, const char *lfp)
